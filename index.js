@@ -307,14 +307,22 @@ function verifyBytecode(abiSelectors, localBytecodeSelectors, onChainBytecodeSel
     const onChainMatch = compareSelectors(abiSelectors, onChainBytecodeSelectors);
     console.log("onChainMatch",onChainMatch);
     
-    if (localMatch && onChainMatch) {
-        return "Bytecode verification successful. Both local and on-chain bytecodes match the ABI.";
+    if (localMatch.isMatch && onChainMatch.isMatch) {
+        console.log("Bytecode verification successful. Both local and on-chain bytecodes match the ABI.");
+        
+        return true
     } else if (!localMatch && !onChainMatch) {
-        return "Bytecode verification failed. Neither local nor on-chain bytecodes match the ABI.";
+        console.log("Bytecode verification failed. Neither local nor on-chain bytecodes match the ABI.");
+        
+        return false
     } else if (!localMatch) {
-        return "Bytecode verification failed. Local bytecode does not match the ABI.";
+        console.log("Bytecode verification failed. Local bytecode does not match the ABI.");
+        
+        return  false;
     } else {
-        return "Bytecode verification failed. On-chain bytecode does not match the ABI.";
+        console.log("Bytecode verification failed. On-chain bytecode does not match the ABI.");
+        
+        return  fasle ;
     }
 }
 
@@ -348,6 +356,8 @@ app.post('/verify-contract', async (req, res) => {
         console.log("localBytecodeSelectors",localBytecodeSelectors);
         
         const isVerified = await verifyBytecode(abiSelectors, localBytecodeSelectors, onChainBytecodeSelectors)
+        console.log("isVerified.....",isVerified);
+        
         if (isVerified) {
             res.json({ success: true, message: "contract verified successfully" })
         } else {
